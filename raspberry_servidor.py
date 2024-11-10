@@ -4,9 +4,9 @@ import pickle
 import struct
 
 servidor_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-servidor_socket.bind(('0.0.0.0', 9999))
+servidor_socket.bind(('192.168.106.99', 9999))
 
-camara = cv2.VideoCapture(0)
+camara = cv2.VideoCapture(1)
 
 cliente_ip = None  
 
