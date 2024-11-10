@@ -8,7 +8,7 @@ wheel = pygame.joystick.Joystick(0)
 wheel.init()
 
 # Configuración del cliente socket
-HOST = '192.168.105.153'  # Dirección del servidor (localhost en este caso)
+HOST = '192.168.106.99'  # Dirección del servidor (localhost en este caso)
 PORT = 65432        # Puerto de comunicación
 
 # Función para leer los datos del volante
