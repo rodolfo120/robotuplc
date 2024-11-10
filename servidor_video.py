@@ -6,7 +6,7 @@ import struct
 cam = cv2.VideoCapture(0)
 
 servidor_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-cliente_ip = ('',9999)
+cliente_ip = ('192.168.105.175',9999)
 
 while cam.isOpened():
     ret, frame = cam.read()

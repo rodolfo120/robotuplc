@@ -5,7 +5,7 @@ import struct
 import numpy as np
 
 cliente_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-cliente_socket.bind(('',9999))
+cliente_socket.bind(('192.168.105.175',9999))
 
 payload_size = struct.calcsize("Q")
 datos = b''
