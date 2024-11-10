@@ -3,8 +3,8 @@ import cv2
 import pickle
 import struct
 
-servidor_socker = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-servidor_socker.bind(('', 9999))
+servidor_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+servidor_socket.bind(('', 9999))
 
 camara = cv2.VideoCapture(0)
 
@@ -19,10 +19,13 @@ while camara.isOpened():
     mensaje_size = struct.pack("Q", len(datos_frame))
 
     if cliente_ip:
-        servidor_socker.sendto(mensaje_size + datos_frame, cliente_ip)
+        servidor_socket.sendto(mensaje_size + datos_frame, cliente_ip)
+
+    for i in range(0, len(datos_frame), 4096):
+            servidor_socket.sendto(datos_frame[i:i+4096], cliente_ip)
 
     try:
-        dato, ip = servidor_socker.recvfrom(4096)
+        dato, ip = servidor_socket.recvfrom(4096)
         if not cliente_ip:
             cliente_ip = ip
 

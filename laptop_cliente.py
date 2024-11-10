@@ -7,7 +7,7 @@ import cv2
 cliente_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 cliente_socket.settimeout(0.1)
 
-servidor_ip = ('', 9999)
+servidor_ip = ('192.168.106.22', 9999)
 
 pygame.init()
 pygame.joystick.init()
