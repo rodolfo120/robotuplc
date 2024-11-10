@@ -7,7 +7,7 @@ import cv2
 cliente_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 cliente_socket.settimeout(0.1)
 
-servidor_ip = ('192.168.106.22', 9999)
+servidor_ip = ('192.168.1.120', 9999)
 
 pygame.init()
 pygame.joystick.init()
@@ -34,8 +34,11 @@ while True:
             packet, _ = cliente_socket.recvfrom(4096)
             dato_frame += packet
         
-        frame = pickle.loads(dato_frame)
-        cv2.imshow('Video Recibido', frame)
+        if len(dato_frame) == mensaje_size:
+            frame = pickle.loads(dato_frame)
+            cv2.imshow('Video Recibido', frame)
+        else:
+            print("Frame incompleto, descartado.")
     except socket.timeout:
         pass  
 
