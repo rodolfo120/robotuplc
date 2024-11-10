@@ -16,9 +16,7 @@ volante.init()
 
 def obtener_datos_volante():
     pygame.event.pump()
-    dato = {'steering': volante.get_axis(0), 'buttons': {}}
-    for i in range(volante.get_numbuttons()):
-        dato['buttons'][f'button_{i}'] = volante.get_button(i)
+    dato = {'volante': volante.get_axis(0), 'acelerador':volante.get_axis(1)}
     return dato
 
 while True:
