@@ -1,36 +1,53 @@
-import socket
-import cv2
-import pickle
-import struct
-import numpy as np
+import pygame
 
-cliente_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-cliente_socket.bind(('192.168.105.175',9999))
+# Inicializar pygame
+pygame.init()
 
-payload_size = struct.calcsize("Q")
-datos = b''
+# Inicializar el joystick
+pygame.joystick.init()
 
-while True:
-    while len(datos) < payload_size:
-        paquete, _ = cliente_socket.recvfrom(4096)
-        datos += paquete
+# Verificar si hay algún volante conectado
+if pygame.joystick.get_count() == 0:
+    print("No se detectó ningún volante.")
+else:
+    # Asignar el primer volante conectado
+    volante = pygame.joystick.Joystick(0)
+    volante.init()
+    print(f"Volante detectado: {volante.get_name()}")
 
-    paquete_msj_size = datos[:payload_size]
-    datos = datos[payload_size:]
-    msj_size = struct.unpack("Q", paquete_msj_size)[0]
+    # Diccionario para almacenar los datos del volante
+    datos_volante = {
+        "angulo_giro": 0.5,   # Inicia en 0.5, posición central
+        "acelerador": 0.0,
+        "freno": 0.0,
+        "embrague": 0.0
+    }
 
-    while len(datos) < msj_size:
-        paquete, _ = cliente_socket.recvfrom(4096)
-        datos += paquete
+    # Bucle principal para leer los datos
+    ejecutando = True
+    while ejecutando:
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                ejecutando = False
 
-    frame_datos = datos[:msj_size]
-    datos = datos[msj_size:]
+            # Actualizar los datos del volante
+            if evento.type == pygame.JOYAXISMOTION:
+                # Obtener y normalizar el ángulo de giro (eje 0)
+                # El valor se normaliza para que -1 sea 0.0 y 1 sea 1.0
+                datos_volante["angulo_giro"] = (volante.get_axis(0) + 1) / 2
 
-    frame = pickle.loads(frame_datos)
-    cv2.imshow('video recibido',frame)
+                # Obtener y normalizar el valor del acelerador (eje 2)
+                datos_volante["acelerador"] = (1 - volante.get_axis(2)) / 2
 
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+                # Obtener y normalizar el valor del freno (eje 3)
+                datos_volante["freno"] = (1 - volante.get_axis(3)) / 2
 
-cliente_socket.close()
-cv2.destroyAllWindows()
+                # Obtener y normalizar el valor del embrague (eje 1)
+                datos_volante["embrague"] = (1 - volante.get_axis(1)) / 2
+
+        # Imprimir el diccionario de datos del volante
+        print(datos_volante)
+
+# Cerrar pygame
+pygame.quit()
+
