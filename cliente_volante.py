@@ -1,31 +1,35 @@
 import socket
 import pygame
 
-# Inicializa pygame y el volante (ver paso anterior)
 pygame.init()
 pygame.joystick.init()
-wheel = pygame.joystick.Joystick(0)
-wheel.init()
+volante = pygame.joystick.Joystick(0)
+volante.init()
 
-# Configuración del cliente socket
-HOST = '192.168.106.99'  # Dirección del servidor (localhost en este caso)
-PORT = 65432        # Puerto de comunicación
+datos_volante = {
+    "angulo_giro": 0.5,  
+    "acelerador": 0.0,
+    "freno": 0.0,
+    "embrague": 0.0
+}
 
-# Función para leer los datos del volante
+HOST = '192.168.106.99' 
+PORT = 65432        
+
 def read_wheel():
     pygame.event.pump()
-    steering = wheel.get_axis(0)
-    throttle = wheel.get_axis(1)
-    brake = wheel.get_axis(2)
-    return steering, throttle, brake
+    datos_volante["angulo_giro"] = (volante.get_axis(0) + 1) / 2
+    datos_volante["acelerador"] = (1 - volante.get_axis(2)) / 2
+    datos_volante["freno"] = (1 - volante.get_axis(3)) / 2
+    datos_volante["embrague"] = (1 - volante.get_axis(1)) / 2
+    return datos_volante
 
-# Enviar datos mediante el socket
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((HOST, PORT))
     try:
         while True:
-            steering, throttle, brake = read_wheel()
-            data = f"{steering},{throttle},{brake}".encode()  # Convierte a bytes
+            fun_datos_volante= read_wheel()
+            data = f"{fun_datos_volante}".encode()  
             s.sendall(data)
     finally:
         pygame.quit()
